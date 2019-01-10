@@ -2,13 +2,78 @@
 # Credits to this site: http://en.linuxreviews.org/HOWTO_stop_automated_spam-bots_using_.htaccess #
 ###################################################################################################
 
+SetEnv TZ Asia/Manila
+Options -Indexes -MultiViews
+
+##############################
+#     Scanpack Integration   #
+##############################
+
+#Set Cookie with httponly and secure flag
+php_value session.cookie_httponly 1
+php_value session.cookie_secure 1
+
+# Turn on IE8-IE9 XSS prevention tools
+Header set X-XSS-Protection "1; mode=block"
+
 # Enable HSTS
 # Note: website must have an SSL installed in order to
 # enable this
 Header set Strict-Transport-Security "max-age=31536000; includeSubdomains;"
 
-Header set Content-Security-Policy "frame-ancestors https://ur1.com/ https://ur2.com/; default-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ssl.google-analytics.com https://apis.google.com; font-src 'self' data: fonts.gstatic.com; img-src 'self' 'unsafe-inline' blob:"
 
+# Scanpack production
+Header set Content-Security-Policy "frame-ancestors https://example.com/ https://example.org/; default-src 'self'; style-src 'self'; script-src 'self'; font-src 'self' data: fonts.gstatic.com; img-src 'self' blob:"
+
+#Header set X-Frame-Options "SAMEORIGIN"
+
+RewriteEngine On
+
+#RewriteCond %{REQUEST_METHOD} ^TRACE
+#RewriteRule ^ - [F]
+
+#RewriteCond %{SERVER_PORT} !=443
+#RewriteCond %{HTTP_HOST}  marlboro\.
+#RewriteRule ^ https://marlboro.ph%{REQUEST_URI} [NS,R,L]
+
+# If the user types just "premium2".
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^premium$ premium2\.php [L]
+
+# If the user enter in any admin section, like "premium2/section".
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^premium\/(.*)$ premium2\.php/$1 [L]
+
+# If the user types just "admin".
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^admin$ admin\.php [L]
+
+# If the user enter in any admin section, like "admin/section".
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^admin\/(.*)$ admin\.php/$1 [L]
+
+# If the user enter in any admin section, like "mobile/section".
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^mobile\/(.*)$ mobile\.php/$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !index\.php
+RewriteCond $1 !^(index\.php|admin.php|robots\.txt|admin_assets)
+RewriteRule ^(.*)$ index.php/$1 [L]
+
+# Remove .php extension from url
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+#php_value upload_max_filesize 300M
+#php_value post_max_size 300M
 
 # Disable access .git and vendor
 RewriteRule .*\.git/.* - [F]
@@ -261,7 +326,17 @@ SetEnvIfNoCase User-Agent "^Zyborg" bad_bot
 SetEnvIfNoCase User-Agent "^Wget" bad_bot
  
 <Limit GET POST HEAD>
-Order Allow,Deny
-Allow from all
-Deny from env=bad_bot
+    Order Allow,Deny
+    Allow from all
+    Deny from env=bad_bot
 </Limit>
+
+########################################
+# Redirect all errors to 404 page      #
+# to confused attackers                #
+########################################
+ErrorDocument 400 /errors/not_found.html
+ErrorDocument 401 /errors/not_found.html
+ErrorDocument 403 /errors/not_found.html
+ErrorDocument 404 /errors/not_found.html
+ErrorDocument 500 /errors/not_found.html
