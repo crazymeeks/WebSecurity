@@ -84,3 +84,42 @@ You should get a forbidden error message:
 Forbidden You don't have permission to access / on this server. Apache/2.4.29 (Ubuntu) Server at 127.0.0.1 Port 80
 
 
+====================================================================================================================
+Reference: https://gist.github.com/josnidhin/91d1ea9cd71fde386c27a9228476834e
+Rate Limiting with mod_security
+
+# assumes libapache2-modsecurity is installed
+
+# Reference Mannual - https://github.com/SpiderLabs/ModSecurity/wiki
+
+SecRuleEngine On
+
+<LocationMatch "^/.*">
+  # initialise the state based on X-Forwarded-For ip address
+  SecRule REQUEST_HEADERS:X-Forwarded-For "@unconditionalMatch" "phase:2,initcol:ip=%{MATCHED_VAR},pass,nolog,id:100"
+
+  # if greater then burst_rate_limit then pause set RATELIMITED var and then return 503
+  SecRule IP:ACCESS_COUNT "@gt {{ burst_rate_limit }}" "phase:2,pause:300,deny,status:503,setenv:RATELIMITED,skip:1,nolog,id:102"
+
+  # if above rule doesnt match increment the count
+  SecAction "phase:2,setvar:ip.access_count=+1,pass,nolog,id:103"
+
+  # set the base rate to one per second
+  SecAction "phase:5,deprecatevar:ip.access_count=1/1,pass,nolog,id:104"
+
+  # set a header when ratelimited
+  Header always set Retry-After "10" env=RATELIMITED
+</LocationMatch>
+
+ErrorDocument 503 "Service Unavailable"
+
+------------------------------------------------------------------------------------------------------------------------
+Rate limiting IP based
+<LocationMatch "^/user/(your_specific_page).*">
+  SecAction initcol:ip=%{REMOTE_ADDR},pass,nolog,id:100
+  SecAction "phase:5,deprecatevar:ip.somepathcounter=1/1,pass,nolog,id:101"
+  SecRule IP:SOMEPATHCOUNTER "@gt 60" "phase:2,pause:300,deny,status:503,setenv:RATELIMITED,skip:1,nolog,id:102"
+  SecAction "phase:2,pass,setvar:ip.somepathcounter=+1,nolog,id:103"
+  Header always set Retry-After "10" env=RATELIMITED
+</LocationMatch>
+=======================================================================================================================
