@@ -1,0 +1,114 @@
+Mod_evasive is an Apache module that can be used to protect against various kinds of attacks on the Apache web server
+including DDoS, DoS and brute force. Mod_evasive provide evasive action in the event of attacks and reports malicious
+activity via email and syslog. It works by inspecting incoming traffic to an apache web server using a dynamic
+hash table of IP addresses and URLs, then blocks traffic from IP addresses that exceed a predetermined threshold.
+
+Credits to this site: https://blog.rapid7.com/2017/04/09/how-to-configure-modevasive-with-apache-on-ubuntu-linux/
+
+System Requirements
+Newly deployed Ubuntu 16.04 server.
+Apache2 web server setup and configured.
+A static IP address 192.168.1.10 is configured on your server.
+Update the System
+Before starting, it is recommended to update your system with the latest stable version with the following command:
+
+ apt-get update -y 
+ apt-get upgrade -y
+ 
+ Once your system is up-to-date, you can proceed to install mod_evasive.
+
+Install mod_evasive
+By default, mod_evasive is available in Ubuntu 16.04 package repository. You can easily install it with the following command:
+
+ apt-get install libapache2-mod-evasive
+ 
+ Once mod_evasive is installed, you can verify it with the following command:
+
+ apachectl -M | grep evasive
+If everything is ok, you should see the following output:
+
+ evasive20_module (shared)
+ 
+ Configure mod_evasive
+Mod_evasive default configuration file is located at /etc/apache2/mods-enabled/evasive.conf. By default, mod_evasive configuration options are disable. You can enable it by editing evasive.conf file, then customize it as per your requirements.
+
+ nano /etc/apache2/mods-enabled/evasive.conf
+ 
+ Change the file as shown below:
+
+ <IfModule mod_evasive20.c> 
+     DOSHashTableSize 3097 
+     DOSPageCount 2 
+     DOSSiteCount 50 
+     DOSPageInterval 1 
+     DOSSiteInterval 1 
+     DOSBlockingPeriod 10 
+     DOSEmailNotify email@yourdomain.com 
+     DOSSystemCommand "su - someuser -c '/sbin/... %s ...'" 
+     DOSLogDir "/var/log/mod_evasive" 
+ </IfModule>
+ 
+ Save and close the file, then create a log directory for mod_evasive.
+
+ mkdir /var/log/mod_evasive 
+ chown -R www-data:www-data /var/log/mod_evasive
+ 
+ Finally, restart Apache service:
+
+ systemctl restart apache2
+ 
+ The above settings are fully customizable and should be configured based on your server’s capabilities and expected traffic flows.as follows:
+
+Explanation of each perameter is as follows:
+
+DOSHashTableSize : Specifies how mod_evasive keeps track of who’s accessing what. Increasing the number improves performance, but also consumes more memory.
+DOSPageCount : Specifies threshold for the number of requests for the same page per page interval.
+DOSSiteCount : Specifies threshold for the total number of requests for any object by the same client on the same listener per site interval.
+DOSPageInterval : The interval used in the page count threshold.
+DOSSiteInterval : The interval used in the site count threshold.
+DOSBlockingPeriod : Specifies the amount of time (in seconds) that an IP is blocked.
+DOSEmailNotify : Specifies the notification email address if IP address becomes blacklisted.
+DOSLogDir : Specifies the log directory.
+
+
+Test mod_evasive
+Once everything is configured properly, lets test to see whether the module is working correctly.
+
+Here, we will use test.pl script written by mod_evasive developers to test mod_evasive.
+This is a perl script located at /usr/share/doc/libapache2-mod-evasive/examples/test.pl.
+
+Run the script with the following command:
+
+ perl /usr/share/doc/libapache2-mod-evasive/examples/test.pl
+ 
+ 
+ If everything is fine, you should see the following output:
+
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden 
+ HTTP/1.1 403 Forbidden
+You can also check the mail log by running the following command:
+
+ tail -f /var/mail/www-data
+ 
+ You should see that 127.0.0.1 is blacklist by mod_evasive:
+
+ Message-Id: <E1cwkeH-0000WE-EQ@master> 
+ From: www-data <www-data@node1>
+ 
+ To: you@yourdomain.com 
+ Subject: HTTP BLACKLIST 127.0.0.1
+ 
+ mod_evasive HTTP Blacklisted 127.0.0.1
+ 
+ --1491635945-eximdsn-1804289383--
