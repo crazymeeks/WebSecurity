@@ -116,7 +116,7 @@ ErrorDocument 503 "Service Unavailable"
 ------------------------------------------------------------------------------------------------------------------------
 Rate limiting IP based
 <LocationMatch "^/user/(your_specific_page).*">
-  SecAction initcol:ip=%{REMOTE_ADDR},pass,nolog,id:100
+  SecAction "initcol:ip=%{REMOTE_ADDR},pass,nolog,id:100"
   SecAction "phase:5,deprecatevar:ip.somepathcounter=1/1,pass,nolog,id:101"
   SecRule IP:SOMEPATHCOUNTER "@gt 60" "phase:2,pause:300,deny,status:503,setenv:RATELIMITED,skip:1,nolog,id:102"
   SecAction "phase:2,pass,setvar:ip.somepathcounter=+1,nolog,id:103"
