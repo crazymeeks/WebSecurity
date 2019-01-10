@@ -14,5 +14,5 @@ header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1
 header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 header('X-XSS-Protection: 1; mode=block');
 header('Public-Key-Pins: pin-sha256="DKvbzsurIZ5t5PvMaiEGfGF8dD2MA7aTUH9dbVtTN28="; max-age=2592000; includeSubDomains');
-header("Content-Security-Policy: default-src *; style-src * 'unsafe-inline'; font-src 'self' data: fonts.gstatic.com; script-src * 'unsafe-inline' 'unsafe-eval'");
+header("Content-Security-Policy: style-src 'self' *; script-src 'self' *.code.jquery.com *.google-analytics.com; font-src 'self' data: * https:;");
 header_remove('X-Powered-By');
