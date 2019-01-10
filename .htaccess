@@ -21,6 +21,9 @@ Header set X-XSS-Protection "1; mode=block"
 # enable this
 Header set Strict-Transport-Security "max-age=31536000; includeSubdomains;"
 
+# prevent mime based attacks
+Header set X-Content-Type-Options "nosniff"
+
 
 # Scanpack production
 Header set Content-Security-Policy "frame-ancestors https://example.com/ https://example.org/; default-src 'self'; style-src 'self'; script-src 'self'; font-src 'self' data: fonts.gstatic.com; img-src 'self' blob:"
