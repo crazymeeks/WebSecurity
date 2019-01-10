@@ -1,0 +1,74 @@
+ModSecurity is an open source, cross-platform web application firewall (WAF) module. Known as the "Swiss Army Knife" of WAFs, it enables web application defenders to gain visibility into HTTP(S) traffic and provides a power rules language and API to implement advanced protections.
+
+Credits to this site: https://hostadvice.com/how-to/how-to-setup-modsecurity-for-apache-on-ubuntu-18-04/
+
+Step 1: Installing Apache Web server
+
+First, you need to install Apache if it is not installed on your Ubuntu 18.04 server.  First update the Ubuntu package index.
+
+$ sudo apt-get update
+
+Then, install Apache:
+
+$ sudo apt-get install Apache2
+
+Press Y and hit Enter when prompted to confirm the installation
+
+If Apache is already installed, you should get the error message below:
+
+apache2 is already the newest version
+
+Step 2: Installing ModSecurity
+Once you have installed Apache, the next step is installing ModSecurity. Run the command below:
+
+$ sudo apt-get install libapache2-mod-security2
+
+You can check if the module is enabled by running the command below:
+
+$ sudo apachectl -M | grep security
+You should get the below output:
+
+security2_module (shared)
+
+Step 3: Configuring ModSecurity
+ModSecurity engine needs rules to work. The rules decide how communication is handled on the web server. Depending on the configuration, ModSecurity can pass, drop, redirect, execute a script or even display a status code during a session.
+
+There is a default configuration file /etc/modsecurity/modsecurity.conf-recommended which you should copy to /etc/modsecurity/modsecurity.conf to enable and configure ModSecurity. To do this, run the command below:
+
+$ sudo cp /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
+
+Then, edit the file that you have copied using a nano editor:
+
+$ sudo nano /etc/modsecurity/modsecurity.conf
+
+Change the value of SecRuleEngine from DetectionOnly to On.
+
+$ SecRuleEngine = on
+Press CTRL +X then Y and Enter to save the file.
+
+Restart Apache for the changes to take effect.
+
+$ sudo systemctl restart apache2
+
+ModSecurity has default rules set located at /usr/share/modsecurity-crs directory. However, it is always recommended to download the rules set from GitHub:
+
+Before, you do this, rename the default rules directory:
+
+$ sudo mv /usr/share/modsecurity-crs /usr/share/modsecurity-crs.bk
+
+Then, download new rule set from GitHub using the command below:
+
+$ sudo git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git /usr/share/modsecurity-crs
+Copy the sample configuration file from the downloaded rules using the command below:
+
+$ sudo cp /usr/share/modsecurity-crs/crs-setup.conf.example /usr/share/modsecurity-crs/crs-setup.conf
+To get these rules working on Apache, you should edit the /etc/apache2/mods-enabled/security2.conf file using a nano editor
+
+$ sudo nano /etc/apache2/mods-enabled/security2.conf
+Add the following two lines at the end
+
+$ IncludeOptional /usr/share/modsecurity-crs/*.conf
+$ IncludeOptional "/usr/share/modsecurity-crs/rules/*.conf
+Save the file by pressing CTRL + X, Y and Enter
+
+Restart Apache: service apache2 restart
