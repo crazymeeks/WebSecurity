@@ -1,4 +1,6 @@
-ModSecurity is an open source, cross-platform web application firewall (WAF) module. Known as the "Swiss Army Knife" of WAFs, it enables web application defenders to gain visibility into HTTP(S) traffic and provides a power rules language and API to implement advanced protections.
+ModSecurity is an open source, cross-platform web application firewall (WAF) module.
+Known as the "Swiss Army Knife" of WAFs, it enables web application defenders to gain
+visibility into HTTP(S) traffic and provides a power rules language and API to implement advanced protections.
 
 Credits to this site: https://hostadvice.com/how-to/how-to-setup-modsecurity-for-apache-on-ubuntu-18-04/
 
