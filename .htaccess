@@ -2,6 +2,13 @@
 # Credits to this site: http://en.linuxreviews.org/HOWTO_stop_automated_spam-bots_using_.htaccess #
 ###################################################################################################
 
+# Enable HSTS
+# Note: website must have an SSL installed in order to
+# enable this
+Header set Strict-Transport-Security "max-age=31536000; includeSubdomains;"
+
+Header set Content-Security-Policy "frame-ancestors https://ur1.com/ https://ur2.com/; default-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ssl.google-analytics.com https://apis.google.com; font-src 'self' data: fonts.gstatic.com; img-src 'self' 'unsafe-inline' blob:"
+
 
 # Disable access .git and vendor
 RewriteRule .*\.git/.* - [F]
