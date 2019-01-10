@@ -74,3 +74,13 @@ $ IncludeOptional "/usr/share/modsecurity-crs/rules/*.conf
 Save the file by pressing CTRL + X, Y and Enter
 
 Restart Apache: service apache2 restart
+
+Step 4: Testing ModSecurity
+You can now try to execute malicious scripts on a browser and see if ModSecurity rules will be triggered. Enter the below URL on a browser. Remember to replace the IP address with the public IP address of your server or domain name
+
+http://127.0.0.1/index.html?exec=/bin/bash
+You should get a forbidden error message:
+
+Forbidden You don't have permission to access / on this server. Apache/2.4.29 (Ubuntu) Server at 127.0.0.1 Port 80
+
+
