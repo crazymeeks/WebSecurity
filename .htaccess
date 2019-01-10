@@ -1,3 +1,8 @@
+###################################################################################################
+# Credits to this site: http://en.linuxreviews.org/HOWTO_stop_automated_spam-bots_using_.htaccess #
+###################################################################################################
+
+
 # Disable access .git and vendor
 RewriteRule .*\.git/.* - [F]
 RedirectMatch 404 ^/vendor(/?|/.*)
