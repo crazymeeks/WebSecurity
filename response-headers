@@ -17,3 +17,8 @@ header('Public-Key-Pins: pin-sha256="DKvbzsurIZ5t5PvMaiEGfGF8dD2MA7aTUH9dbVtTN28
 header("Content-Security-Policy: style-src 'self' *; script-src 'self' *.code.jquery.com *.google-analytics.com; font-src 'self' data: * https:;");
 //header("Content-Security-Policy: default-src *; style-src * 'unsafe-inline'; font-src 'self' data: fonts.gstatic.com; script-src * 'unsafe-inline' 'unsafe-eval'");
 header_remove('X-Powered-By');
+
+
+/**
+ * CSP Scanner: https://observatory.mozilla.org/
+ */
