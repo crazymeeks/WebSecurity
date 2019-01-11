@@ -1,0 +1,58 @@
+################################
+# Changing port of phpmyadmin  #
+################################
+Original Reference: https://askubuntu.com/questions/896988/change-phpmyadmin-port-from-80-to-another-number
+
+1. Understanding of the default configuration of PhpMyAdmin. By default (within Ubuntu 16.04) PhpMyAdmin is included (and enabled) into the Apache's configuration (for all VirtualHosts!) through this additional configuration file:
+
+/etc/apache2/conf-enabled/phpmyadmin.conf
+This file is a symbolic link to the file /etc/apache2/conf-available/phpmyadmin.conf, which is a symbolic link to the file /etc/phpmyadmin/apache.conf, which will be used in the next step.
+
+2. Create new VirtualHost configuration file. Let's call it phpmyadmin.conf and create it by nano (or you can use your favorite text editor):
+
+sudo nano /etc/apache2/sites-available/phpmyadmin.conf
+The content of this file should looks like:
+
+Listen 99
+
+<VirtualHost *:99>
+
+        ServerName localhost
+
+        <Directory /usr/share/phpmyadmin>
+                AllowOverride None
+                Require all granted
+        </Directory>
+
+        DocumentRoot /usr/share/phpmyadmin
+
+        Include /etc/phpmyadmin/apache.conf
+
+        ErrorLog ${APACHE_LOG_DIR}/phpmyadmin.error.log
+        CustomLog ${APACHE_LOG_DIR}/phpmyadmin.access.log combined
+
+</VirtualHost>
+
+Where:
+
+Listen 99 instructs Apache2 to listen on port 99. Like @L.D.James says you can put this directive in /etc/apache2/ports.conf or you can leave it here;
+
+<VirtualHost *:99>...</VirtualHost> defines a VirtualHost which will handle the requests form all interfaces (*) on port :99.
+
+ServerName localhost this directive is optional and can be customised according to your needs. (Usually there have ServerName set on the Server level - in /etc/apache2/apache2.conf);
+
+<Directory /usr/share/phpmyadmin>...</Directory> this directive is optional because the access permissions for /usr/share/ are usually set in /etc/apache2/apache2.conf. But you can add specific rules here, for example you can Set Up Password Authentication;
+
+DocumentRoot /usr/share/phpmyadmin this directive sets /usr/share/phpmyadmin as directory that forms the main document tree visible from the web, for the current VirtualHost;
+
+Include /etc/phpmyadmin/apache.conf this directive includes the default phpMyAdmin's configuration into Apache's configuration. Thus /etc/phpmyadmin/apache.conf will be included only for the current VirtualHost! Instead of this directive you can copy/paste the content of /etc/phpmyadmin/apache.conf in this place.
+
+3. Switch Apache's configuration and restart it.
+
+sudo a2disconf phpmyadmin
+sudo a2ensite phpmyadmin
+sudo systemctl restart apache2.service
+Where:
+
+a2disconf phpmyadmin will disable the default phpMyAdmin's configuration, described in 1.
+a2ensite phpmyadmin will enable the new VirtualHost, described in 2.
