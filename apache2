@@ -29,6 +29,9 @@ Header set Content-Security-Policy "default-src 'self' 'unsafe-inline'; style-sr
 # No Sniff
 Header set X-Content-Type-Options: "nosniff"
 
+# HttpOnly Secure cookie
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+
 # Prevent remote attackers to obtain sensitive information like inode  number
 # multipart MIME Boundary, and child process through Etag header
 FileETag None
