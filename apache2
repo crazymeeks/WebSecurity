@@ -1,0 +1,4 @@
+# Set Cache Control on the ff files
+<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf|txt)$">
+  Header set Cache-Control "private,no-cache,no-store"
+</FilesMatch>
