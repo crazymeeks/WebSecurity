@@ -1,4 +1,43 @@
+mod_headers must be enable in order to use Header
+
+
+# Additional config must be enabled is at /etc/apache2/conf-enabled/security.conf and set the following
+ServerTokens OS -> ServerTokens Prod
+ServerSignature On -> ServerSignature Off
+TraceEnable On -> TraceEnable Off
+
 # Set Cache Control on the ff files
 <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf|txt)$">
   Header set Cache-Control "private,no-cache,no-store"
+</FilesMatch>
+
+# Default Cache-Control
+Header set Cache-Control "max-age=290304000, public"
+# OR
+Header set Cache-Control "private, no-cache, no-store"
+
+# HSTS
+Header set Strict-Transport-Security "max-age=31536000; includeSubdomains;"
+
+# Cross Site Scripting protection (Framing)
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-XSS-Protection "1; mode=block"
+
+# CSP
+Header set Content-Security-Policy "default-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ssl.google-analytics.com https://apis.google.com https://www.google-analytics.com/; font-src 'self' data: fonts.gstatic.com; img-src 'self' 'unsafe-inline' https://www.marlboro.ph/ https://marlboro.ph/ https://www.google-analytics.com/ https://stats.g.doubleclick.net/ blob:"
+
+# No Sniff
+Header set X-Content-Type-Options: "nosniff"
+
+# Block access to all .log files
+<Files ~ "^.*\.(LOG|log|bak|bk|LCK)">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</Files>
+
+# Protect files from prying eyes.
+<FilesMatch "^(composer.json|composer.lock|htaccess-sample|maintenance.php|wp-config-sample.php|wp-config.php)$">
+    Order Allow,Deny
+    Deny from All
 </FilesMatch>
