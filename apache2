@@ -25,6 +25,7 @@ Header set X-Frame-Options "SAMEORIGIN"
 # There's a good articles about HPKP here:
 # https://raymii.org/s/articles/HTTP_Public_Key_Pinning_Extension_HPKP.html
 # https://bjornjohansen.no/public-key-pinning
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Public_Key_Pinning
 # The first "pin-sha256" - is the primary pin, the second one is the backup(if any)
 #Header set Public-Key-Pins "pin-sha256=\"klO23nT2ehFDXCfx3eHTDRESMz3asj1muO+4aIdjiuY=\"; pin-sha256=\"633lt352PKRXbOwf4xSEa1M517scpD3l5f79xMD9r9Q=\"; max-age=2592000; includeSubDomains"
 
