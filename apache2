@@ -18,7 +18,13 @@ Header set Strict-Transport-Security "max-age=31536000; includeSubdomains;"
 # Cross Site Scripting protection(Framing)
 Header set X-Frame-Options "SAMEORIGIN"
 
-
+# Optional. Enable if necessary
+#<FilesMatch "\.(ico|flv|jpg|jpeg|png|gif|css|swf)$">
+#        Header set Cache-Control "max-age=2678400, public"
+#</FilesMatch>
+#<FilesMatch "\.(js)$">
+#        Header set Cache-Control "max-age=2678400, private"
+#</FilesMatch>
 
 # Block access to all .log files
 <Files ~ "^.*\.(LOG|log|bak|bk|LCK|txt)">
