@@ -10,6 +10,16 @@
         Header set Pragma "no-cache"
 </FilesMatch>
 
+# Prevent DDos Attack
+<Directory "/var/www/html">
+        LimitRequestBody 10000
+</Directory>
+
+# Disable symlinks
+<Directory />
+        Options -FollowSymLinks
+</Directory>
+
 # Our Default Cache Control
 Header set Cache-Control "private, no-cache, no-store"
 Header set Pragma "no-cache"
