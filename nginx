@@ -1,3 +1,4 @@
+# Source: https://geekflare.com/http-header-implementation/
 # Set Cache-Control header
 # On js,html,css,gz files
 location ~ \.(js|gz|html|css)$ {
