@@ -12,6 +12,15 @@ add_header Referrer-Policy same-origin;
 # Remove nginx version in response headers
 server_tokens off;
 
+server {
+        # Mitigate DDoS attack(Slow HTTP POST Vulnerability)
+        client_max_body_size 2m;
+        client_body_buffer_size 8k;
+        large_client_header_buffers 4 8k;
+        client_body_timeout 5s;
+        client_header_timeout 5s;
+}
+
 # Set Cache-Control header
 # On js,html,css,gz files
 location ~ \.(js|gz|html|css)$ {
