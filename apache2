@@ -1,3 +1,6 @@
+# Redirect to HTTPS, put this inside <VirtualHost *:80>
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [redirect=301]
+
 #mod_headers must be enable in order to use Header
 # Additional config must be enabled is at /etc/apache2/conf-enabled/security.conf and set the following
 #ServerTokens OS -> ServerTokens Prod
