@@ -63,7 +63,7 @@ Header set X-Frame-Options "SAMEORIGIN"
     Deny from All
 </FilesMatch>
 
-Header set Content-Security-Policy "default-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ssl.google-analytics.com https://apis.google.com https://www.google-analytics.com/; font-src 'self'; img-src 'self' 'unsafe-inline' https://www.google-analytics.com/ https://stats.g.doubleclick.net/; frame-src 'self'; connect-src 'self'; media-src 'self'; object-src 'self';"
+Header set Content-Security-Policy "default-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' 'unsafe-eval' *.fontawesome.com https://apis.google.com https://fonts.googleapis.com *.google.com; script-src 'self' https://cdn.rawgit.com/saribe/eModal/1.2.67/dist/eModal.min.js data: *.facebook.net *.google.com https://www.googletagmanager.com 'unsafe-inline' *.fontawesome.com 'unsafe-eval' *.fontawesome.com https://www.googletagmanager.com https://ssl.google-analytics.com https://apis.google.com https://www.google-analytics.com/; font-src 'self' *.fontawesome.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: *.facebook.com *.google.com 'unsafe-inline' *.fontawesome.com *.gstatic.com https://www.google-analytics.com/ https://stats.g.doubleclick.net/; frame-src 'self' *.google.com *.facebook.com 'unsafe-inline' https://accounts.google.com/; connect-src 'self' *.facebook.com *.google.com; media-src 'self'; object-src 'self';"
 Header set X-XSS-Protection "1; mode=block"
 
 # HttpOnly Secure cookie
